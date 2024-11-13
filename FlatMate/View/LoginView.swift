@@ -32,11 +32,16 @@ struct LoginView: View {
                 VStack {
                     InputView(text: $email, title: "Email Address", placeholder: "name@example.com", isSecureField: false)
                     InputView(text: $password, title: "Password", placeholder: "***************", isSecureField: true)
-
-                    // Use ButtonView for the Log In button
-                    ButtonView(title: "Log In") {
-                        isLoginActive = true // Activate navigation on button press
+                    // Use ButtonView for "forget password" link button
+                    HStack {
+                        Spacer()
+                        ButtonView(title: "Forgot Password?", action:{}, type: .link)
                     }
+                    .padding(.top, -20)
+                    .padding(.bottom, 20)
+                   
+                    // Use ButtonView for the Log In button
+                    ButtonView(title: "Log In", action: {isLoginActive = true}, type: .standard)
                 }
                 .padding(.horizontal, 20)
 

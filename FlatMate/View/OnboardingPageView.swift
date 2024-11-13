@@ -50,7 +50,7 @@ struct LandingPageView: View {
                         if self.currentStep > 0 {
                             self.currentStep -= 1
                         }
-                    })
+                    }, type: .standard)
                     .disabled(currentStep == 0) // Disable on the first page
 
                     // Next or Get Started Button
@@ -61,7 +61,7 @@ struct LandingPageView: View {
                             // Trigger navigation to LoginView
                             self.showLogin = true
                         }
-                    })
+                    }, type: .standard)
                 }
                 .padding(.horizontal, 30)
 

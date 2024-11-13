@@ -39,10 +39,8 @@ struct SignupView: View {
                     InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "***************", isSecureField: true)
 
                     // Signup Button
-                    ButtonView(title: "Sign up") {
-                        // Add logic here to validate inputs and handle signup
-                        isSignupActive = true
-                    }
+                    ButtonView(title: "Sign up", action: {// Add logic here to validate inputs and handle signup
+                        isSignupActive = true}, type: .standard)
                 }
                 .padding(.horizontal, 20)
 
