@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OnBoardingPage: View {
+struct LandingPageStep: View {
     @State private var opacityEffect: Bool = false
     @State private var clipEdges: Bool = false
     
@@ -40,5 +40,5 @@ struct OnBoardingPage: View {
 }
 
 #Preview {
-    OnBoardingPage(imageName: "landingPageImage-1", title: "Live with like-minded people.", description: "It's easier than you think.")
+    LandingPageStep(imageName: "landingPageImage-1", title: "Live with like-minded people.", description: "It's easier than you think.")
 }

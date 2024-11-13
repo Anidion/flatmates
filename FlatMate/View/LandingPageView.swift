@@ -1,10 +1,10 @@
 import SwiftUI
 
 private let onboardingSteps = [
-    OnBoardingPage(imageName: "landingPageImage-1", title: "Live with like-minded people.", description: "It’s easier than you think."),
-    OnBoardingPage(imageName: "landingPageImage-2", title: "Your Perfect Roommate is a Swipe Away", description: "Swipe right to like, left to pass. It’s that simple!"),
-    OnBoardingPage(imageName: "landingPageImage-3", title: "Say Goodbye to Roommate Drama", description: "Find roommates who share your habits and lifestyle choices."),
-    OnBoardingPage(imageName: "landingPageImage-4", title: "Meet Your Perfect Roommate Today", description: "FlatMate makes it easy to find the right person, fast.")
+    LandingPageStep(imageName: "landingPageImage-1", title: "Live with like-minded people.", description: "It’s easier than you think."),
+    LandingPageStep(imageName: "landingPageImage-2", title: "Your Perfect Roommate is a Swipe Away", description: "Swipe right to like, left to pass. It’s that simple!"),
+    LandingPageStep(imageName: "landingPageImage-3", title: "Say Goodbye to Roommate Drama", description: "Find roommates who share your habits and lifestyle choices."),
+    LandingPageStep(imageName: "landingPageImage-4", title: "Meet Your Perfect Roommate Today", description: "FlatMate makes it easy to find the right person, fast.")
 ]
 
 struct LandingPageView: View {
@@ -28,7 +28,7 @@ struct LandingPageView: View {
                     }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                
+
                 HStack {
                     ForEach(onboardingSteps.indices, id: \.self) { index in
                         if index == currentStep {
