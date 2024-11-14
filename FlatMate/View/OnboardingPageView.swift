@@ -61,7 +61,7 @@ struct LandingPageView: View {
                             // Trigger navigation to LoginView
                             self.showLogin = true
                         }
-                    }, type: .standard)
+                    })
                 }
                 .padding(.horizontal, 30)
 

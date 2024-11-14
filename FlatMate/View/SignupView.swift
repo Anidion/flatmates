@@ -40,7 +40,7 @@ struct SignupView: View {
 
                     // Signup Button
                     ButtonView(title: "Sign up", action: {// Add logic here to validate inputs and handle signup
-                        isSignupActive = true}, type: .standard)
+                        isSignupActive = true})
                 }
                 .padding(.horizontal, 20)
 

@@ -17,6 +17,12 @@ struct ButtonView: View {
     let action: () -> Void
     let type: ButtonType
 
+    init(title: String, action: @escaping () -> Void, type: ButtonType = .standard) {
+        self.title = title
+        self.action = action
+        self.type = type
+    }
+
     var body: some View {
         Group {
             switch type {
@@ -51,7 +57,7 @@ struct ButtonView: View {
 
 #Preview {
     VStack(spacing: 16) {
-        ButtonView(title: "Log In", action: {}, type: .standard)
+        ButtonView(title: "Log In", action: {})
         ButtonView(title: "Forgot Password?", action: {}, type: .link)
     }
     .padding()

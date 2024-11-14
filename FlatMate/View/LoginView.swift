@@ -41,7 +41,7 @@ struct LoginView: View {
                     .padding(.bottom, 20)
                    
                     // Use ButtonView for the Log In button
-                    ButtonView(title: "Log In", action: {isLoginActive = true}, type: .standard)
+                    ButtonView(title: "Log In", action: {isLoginActive = true})
                 }
                 .padding(.horizontal, 20)
 
