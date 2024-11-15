@@ -112,10 +112,8 @@ struct OnboardingPageView: View {
     }
 
     func isStepComplete() -> Bool {
-        print("isStepComplete: \(currentStep)")
         switch currentStep {
             case 0:
-                print("hello")
                 return firstName != "" && lastName != ""
             case 1:
                 // Time interval is in seconds, we're just checking that the default date was changed to a date in the past
@@ -151,7 +149,7 @@ struct OnboardingPageView: View {
                                 self.currentStep -= 1
                             }
                         }, type: .outline)
-                        .disabled(self.currentStep == 0) // Disable on the first page
+                        .opacity(self.currentStep == 0 ? 0 : 1) // Hide on first page
 
                     ButtonView(
                         title: self.currentStep == onboardingSteps.count - 1 ? "Submit" : "Next",

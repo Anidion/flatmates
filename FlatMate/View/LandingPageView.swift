@@ -9,7 +9,7 @@ private let onboardingSteps = [
 
 struct LandingPageView: View {
     @State private var currentStep = 0
-    @State private var showLogin = false // State variable to control navigation
+    @State private var isComplete = false // State variable to control navigation
 
     var body: some View {
         NavigationStack {
@@ -51,7 +51,7 @@ struct LandingPageView: View {
                             self.currentStep -= 1
                         }
                     }, type: .standard)
-                    .disabled(currentStep == 0) // Disable on the first page
+                        .disabled(currentStep == 0) // Disable on the first page
 
                     // Next or Get Started Button
                     ButtonView(title: currentStep < onboardingSteps.count - 1 ? "Next" : "Get started", action: {
@@ -59,15 +59,14 @@ struct LandingPageView: View {
                             self.currentStep += 1
                         } else {
                             // Trigger navigation to LoginView
-                            self.showLogin = true
+                            self.isComplete = true
                         }
                     })
                 }
                 .padding(.horizontal, 30)
-
                 // Use the new navigationDestination method
-                .navigationDestination(isPresented: $showLogin) {
-                    LoginView().navigationBarBackButtonHidden(true)
+                .navigationDestination(isPresented: $isComplete) {
+                    OnboardingPageView().navigationBarBackButtonHidden(true)
                 }
             }
         }
