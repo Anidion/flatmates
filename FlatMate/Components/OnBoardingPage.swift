@@ -19,7 +19,7 @@ struct OnBoardingPage: View {
         VStack {
             Image(imageName)
                 .resizable()
-                .scaledToFit()
+                .aspectRatio(contentMode: .fill)
                 .frame(height: 313) // Adjust the image size as needed
                 .clipShape(Circle())
             
@@ -40,5 +40,5 @@ struct OnBoardingPage: View {
 }
 
 #Preview {
-    OnBoardingPage(imageName: "landingPageImage-1", title: "Live with like-minded people.", description: "It's easier than you think.")
+    OnBoardingPage(imageName: "landing1", title: "Live with like-minded people.", description: "It's easier than you think.")
 }

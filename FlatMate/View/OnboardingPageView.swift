@@ -1,10 +1,10 @@
 import SwiftUI
 
 private let onboardingSteps = [
-    OnBoardingPage(imageName: "landingPageImage-1", title: "Live with like-minded people.", description: "It’s easier than you think."),
-    OnBoardingPage(imageName: "landingPageImage-2", title: "Your Perfect Roommate is a Swipe Away", description: "Swipe right to like, left to pass. It’s that simple!"),
-    OnBoardingPage(imageName: "landingPageImage-3", title: "Say Goodbye to Roommate Drama", description: "Find roommates who share your habits and lifestyle choices."),
-    OnBoardingPage(imageName: "landingPageImage-4", title: "Meet Your Perfect Roommate Today", description: "FlatMate makes it easy to find the right person, fast.")
+    OnBoardingPage(imageName: "landing1", title: "Live with like-minded people.", description: "It’s easier than you think."),
+    OnBoardingPage(imageName: "landing2", title: "Your Perfect Roommate is a Swipe Away", description: "Swipe right to like, left to pass. It’s that simple!"),
+    OnBoardingPage(imageName: "landing3", title: "Say Goodbye to Roommate Drama", description: "Find roommates who share your habits and lifestyle choices."),
+    OnBoardingPage(imageName: "landing4", title: "Meet Your Perfect Roommate Today", description: "FlatMate makes it easy to find the right person, fast.")
 ]
 
 struct LandingPageView: View {
