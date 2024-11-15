@@ -14,11 +14,13 @@ struct LandingPageView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Image("Logo")
+                Image("Logo Straight Blue")
                     .resizable()
                     .scaledToFit()
                     .frame(height: 103)
-                    .padding(.bottom, 20)
+                    .padding(.top, 15)
+                    .padding(.bottom, 15)
+                    .padding(.horizontal, 35)
 
                 // Use the array-based ForEach
                 TabView(selection: $currentStep) {
