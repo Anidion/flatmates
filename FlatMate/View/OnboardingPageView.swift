@@ -150,7 +150,7 @@ struct OnboardingPageView: View {
                             if self.currentStep > 0 {
                                 self.currentStep -= 1
                             }
-                        }, style: .secondary)
+                        }, type: .outline)
                         .disabled(self.currentStep == 0) // Disable on the first page
 
                     ButtonView(
