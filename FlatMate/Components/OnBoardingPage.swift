@@ -26,11 +26,13 @@ struct OnBoardingPage: View {
             Text(title)
                 .font(.custom("Outfit-Semibold", size: 34))
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 20)
             
             Text(description)
                 .font(.custom("Outfit-Regular", size: 16))
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 10)
             
             Spacer()
