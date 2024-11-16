@@ -1,3 +1,4 @@
+
 //
 //  Edit_Profile.swift
 //
@@ -14,7 +15,7 @@ struct EditProfileView: View {
     @State private var firstname: String = ""
     @State private var lastname: String = ""
     @State private var age: String = ""
-    @State private var bio: String = "" // Corrected: added a separate variable for bio
+    @State private var bio: String = ""
     @State private var isSmoker: Bool = false
     @State private var pets: Bool = false
     @State private var selectedGender: String = genders[0]
@@ -24,79 +25,151 @@ struct EditProfileView: View {
     
     var body: some View {
         NavigationView {
-            Form {
-                // First Name Text Field
-                TextField("First Name", text: $firstname)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                // Last Name Text Field
-                TextField("Last Name", text: $lastname)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                // Age Text Field
-                TextField("Age", text: $age)
-                    .keyboardType(.numberPad)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                // Gender Picker
-                Picker("Gender", selection: $selectedGender) {
-                    ForEach(genders, id: \.self) { gender in
-                        Text(gender).tag(gender)
-                    }
-                }
-                
-                // Personal Bio Text Field
-                TextField("Personal Bio", text: $bio) // Corrected: uses 'bio' state variable
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .frame(height: 80) // Set a larger height for multiline text
-                    .lineLimit(3) // Set line limit to allow for more content
-                
-                // Smoker Toggle
-                Toggle("Smoker", isOn: $isSmoker)
-                
-                // Pets Allowed Toggle
-                Toggle("Pets Allowed", isOn: $pets)
-                
-                // Party Frequency Picker
-                Picker("Parties", selection: $selectedPartyFrequency) {
-                    ForEach(frequencies, id: \.self) { frequency in
-                        Text(frequency).tag(frequency)
-                    }
-                }
-                Text("How often do you host parties?")
-                    .font(.footnote)
-                    .padding(.horizontal)
-                
-                // Guest Frequency Picker
-                Picker("Guests", selection: $selectedGuestFrequency) {
-                    ForEach(frequencies, id: \.self) { frequency in
-                        Text(frequency).tag(frequency)
-                    }
-                }
-                Text("How often do you have guests over?")
-                    .font(.footnote)
-                    .padding(.horizontal)
-                
-                // Noise Tolerance Slider
-                VStack {
-                    Text("Noise Tolerance")
-                        .font(.headline)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 17) {
+                    // Profile Picture
                     HStack {
-                        Text("Quiet")
-                        Slider(value: $noiseTolerance, in: 0...1, step: 0.1)
-                            .accentColor(.blue)
-                        Text("Loud")
+                        
+                        VStack{
+                            Circle()
+                                .fill(Color.gray)
+                                .frame(width: 80, height: 80)
+                            
+                            Button("+"){
+                                
+                            }
+                            .frame(maxWidth: 20, maxHeight: 20)
+                            .background(Color.gray)
+                            .cornerRadius(20)
+                        }
+                        
+                        // First Name, Last Name, Age
+                        VStack(alignment: .leading) {
+                            
+                            HStack{
+                                Text("First Name")
+                                    .font(.custom("Outfit-Bold", fixedSize:15))
+                                TextField("", text: $firstname)
+                                    .textFieldStyle(.automatic)
+                            }
+                            Divider()
+                            
+                            HStack{
+                                Text("Last Name")
+                                    .font(.custom("Outfit-Bold", fixedSize:15))
+                                TextField("", text: $lastname)
+                                    .textFieldStyle(.automatic)
+                            }
+                            Divider()
+                            
+                            HStack{
+                                Text("Age")
+                                    .font(.custom("Outfit-Bold", fixedSize:15))
+                                TextField("", text: $age)
+                                    .keyboardType(.numberPad)
+                                    .textFieldStyle(.automatic)
+                                
+                            }
+                            Divider()
+                        }
                     }
-                    .padding()
+                    
+                    // Gender Picker
+                    VStack(alignment: .leading) {
+                        Text(" Gender")
+                            .font(.custom("Outfit-bold", fixedSize:15))
+                        Picker("Select Gender", selection: $selectedGender) {
+                            ForEach(genders, id: \.self) { gender in
+                                Text(gender).tag(gender)
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        Divider()
+                    }
+                    
+                    // Personal Bio
+                    VStack(alignment: .leading) {
+                        Text(" Personal Bio")
+                            .font(.custom("Outfit-Bold", fixedSize:15))
+                        TextEditor(text: $bio)
+                            .frame(height: 30)
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white))
+                    }
+                    Divider()
+                    
+                    // Smoker Toggle
+                    Toggle("  I am a smoker.", isOn: $isSmoker)
+                        .font(.custom("Outfit-Bold", fixedSize:15))
+           
+                    // Pets Allowed Toggle
+                    Toggle("  I am a pet owner.", isOn: $pets)
+                        .font(.custom("Outfit-Bold", fixedSize:15))
+              
+                    
+                    // Party Frequency
+                    VStack(alignment: .leading) {
+                        Text("  How often do you host parties?")
+                            .font(.custom("Outfit-Bold", fixedSize:15))
+                        Picker("Parties", selection: $selectedPartyFrequency) {
+                            ForEach(frequencies, id: \.self) { frequency in
+                                Text(frequency).tag(frequency)
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+              
+                    
+                    // Guest Frequency
+                    VStack(alignment: .leading) {
+                        Text("  How often do you have guests over?")
+                            .font(.custom("Outfit-Bold", fixedSize:15))
+                        Picker(" Guests", selection: $selectedGuestFrequency) {
+                            ForEach(frequencies, id: \.self) { frequency in
+                                Text(frequency).tag(frequency)
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                    
+                    // Noise Tolerance Slider
+                    VStack(alignment: .leading) {
+                        Text("  Noise Tolerance")
+                            .font(.custom("Outfit-Bold", fixedSize:15))
+                        HStack {
+                            Text("Quiet")
+                            Slider(value: $noiseTolerance, in: 0...1, step: 0.1)
+                                .accentColor(.blue)
+                            Text("Loud")
+                        }
+                    }
+                   
+                    
+                    // Buttons
+                    HStack {
+                        ButtonView(title: "Ignore Changes", action: {})
+                            .padding(.horizontal, 16)  // Reduce horizontal padding
+                                
+                               .font(.custom("Outfit-Bold", fixedSize:15))
+                                .padding(10)
+
+                        ButtonView(title: "Update Profile", action: {})
+                             .padding(.horizontal, 16)
+                               .font(.custom("Outfit-Bold", fixedSize:15))
+                               .padding(10)
+                        
+                    }
+                    .offset(y: -7)
+                    
                 }
+                .navigationBarTitle("Edit Profile", displayMode: .large)
+                
             }
-            .navigationBarTitle("Edit Profile", displayMode: .large) // Fixed typo
         }
     }
-}
-
-struct EditProfileView_Preview: PreviewProvider {
-    static var previews: some View {
-        EditProfileView()
+    
+    struct EditProfileView_Preview: PreviewProvider {
+        static var previews: some View {
+            EditProfileView()
+        }
     }
 }
