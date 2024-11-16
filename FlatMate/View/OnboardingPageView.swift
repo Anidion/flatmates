@@ -132,10 +132,11 @@ struct OnboardingPageView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                TabView(selection: $currentStep) {
+                ZStack {
                     ForEach(0 ..< onboardingSteps.count, id: \.self) { index in
                         onboardingSteps[index]
                             .tag(index)
+                            .opacity(index == self.currentStep ? 1 : 0)
                     }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
