@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-let genders = ["Female", "Male", "Non-binary"]
+let genders = ["Female", "Male", "Non-binary", "Other"]
 let frequencies = ["Never", "Sometimes", "Always"]
 
 struct EditProfileView: View {
@@ -22,7 +22,7 @@ struct EditProfileView: View {
     @State private var selectedPartyFrequency: String = frequencies[0]
     @State private var selectedGuestFrequency: String = frequencies[0]
     @State private var noiseTolerance: Double = 0.0 // Range from 0.0 to 1.0
-    
+
     var body: some View {
         NavigationView {
             ScrollView {

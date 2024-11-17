@@ -10,6 +10,7 @@ import SwiftUI
 struct ButtonView: View {
     enum ButtonType {
         case standard
+        case outline
         case link
     }
 
@@ -38,6 +39,24 @@ struct ButtonView: View {
                         }
                         .background(Color("primary"))
                         .cornerRadius(10)
+                    }
+
+                case .outline:
+                    Button(action: {
+                        self.action()
+                    }) {
+                        HStack {
+                            Text(title)
+                                .font(.custom("Outfit-Medium", size: 17))
+                                .foregroundColor(Color("primary"))
+                                .frame(maxWidth: .infinity, minHeight: 48)
+                        }
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color("primary"), lineWidth: 3)
+                        )
                     }
 
                 case .link:
