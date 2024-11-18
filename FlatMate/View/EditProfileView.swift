@@ -6,6 +6,7 @@
 //  Created by Anshi on 2024-10-22.
 //
 
+import FirebaseFirestore
 import SwiftUI
 
 let genders = ["Female", "Male", "Non-binary", "Other"]
@@ -22,6 +23,33 @@ struct EditProfileView: View {
     @State private var selectedPartyFrequency: String = frequencies[0]
     @State private var selectedGuestFrequency: String = frequencies[0]
     @State private var noiseTolerance: Double = 0.0 // Range from 0.0 to 1.0
+    @EnvironmentObject var viewModel: AuthViewModel
+    func onComplete() {
+        print("DONE")
+    }
+
+    func handleSubmit() {
+        guard let userID = viewModel.userSession?.uid else { return }
+        let data: [String: Any] = [
+            "firstName": firstname,
+            "lastName": lastname,
+            "gender": selectedGender,
+            "bio": bio,
+//            "roomState": roomState,
+            "smoker": isSmoker,
+            "petsOk": pets,
+            "noise": noiseTolerance,
+            "partyFreq": selectedPartyFrequency,
+            "guestFreq": selectedGuestFrequency
+        ]
+        Firestore.firestore().collection("users").document(userID).updateData(data) { error in
+            if let error = error {
+                print("DEBUG: Failed to save onboarding data with error \(error.localizedDescription)")
+            } else {
+                onComplete()
+            }
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -31,7 +59,7 @@ struct EditProfileView: View {
                     Text("Edit Profile")
                         .font(.custom("Outfit-Bold", size: 28))
                     Divider()
-                    
+
                     // Profile Picture
                     HStack {
                         VStack {
@@ -40,7 +68,7 @@ struct EditProfileView: View {
                                 Circle()
                                     .fill(Color.gray)
                                     .frame(width: 100, height: 100)
-                                
+
                                 // Plus Button
                                 Button(action: {}) {
                                     Image(systemName: "plus")
@@ -56,23 +84,23 @@ struct EditProfileView: View {
                         .padding(.trailing, 10)
                         // First Name, Last Name, Age
                         VStack(alignment: .leading) {
-                            HStack{
+                            HStack {
                                 Text("First Name")
-                                    .font(.custom("Outfit-Bold", fixedSize:15))
+                                    .font(.custom("Outfit-Bold", fixedSize: 15))
                                 TextField("", text: $firstname)
                                     .textFieldStyle(.automatic)
                             }
                             Divider()
-                            HStack{
+                            HStack {
                                 Text("Last Name")
-                                    .font(.custom("Outfit-Bold", fixedSize:15))
+                                    .font(.custom("Outfit-Bold", fixedSize: 15))
                                 TextField("", text: $lastname)
                                     .textFieldStyle(.automatic)
                             }
                             Divider()
-                            HStack{
+                            HStack {
                                 Text("Age")
-                                    .font(.custom("Outfit-Bold", fixedSize:15))
+                                    .font(.custom("Outfit-Bold", fixedSize: 15))
                                 TextField("", text: $age)
                                     .keyboardType(.numberPad)
                                     .textFieldStyle(.automatic)
@@ -80,11 +108,11 @@ struct EditProfileView: View {
                             Divider()
                         }
                     }
-                    
+
                     // Gender Picker
                     VStack(alignment: .leading) {
                         Text(" Gender")
-                            .font(.custom("Outfit-bold", fixedSize:15))
+                            .font(.custom("Outfit-bold", fixedSize: 15))
                         Picker("Select Gender", selection: $selectedGender) {
                             ForEach(genders, id: \.self) { gender in
                                 Text(gender).tag(gender)
@@ -93,30 +121,29 @@ struct EditProfileView: View {
                         .pickerStyle(SegmentedPickerStyle())
                         Divider()
                     }
-                    
+
                     // Personal Bio
                     VStack(alignment: .leading) {
                         Text(" Personal Bio")
-                            .font(.custom("Outfit-Bold", fixedSize:15))
+                            .font(.custom("Outfit-Bold", fixedSize: 15))
                         TextEditor(text: $bio)
                             .frame(height: 30)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white))
                     }
                     Divider()
-                    
+
                     // Smoker Toggle
                     Toggle("  I am a smoker.", isOn: $isSmoker)
-                        .font(.custom("Outfit-Bold", fixedSize:15))
+                        .font(.custom("Outfit-Bold", fixedSize: 15))
                     Divider()
                     // Pets Allowed Toggle
                     Toggle("  I am a pet owner.", isOn: $pets)
-                        .font(.custom("Outfit-Bold", fixedSize:15))
-              
-                    
+                        .font(.custom("Outfit-Bold", fixedSize: 15))
+
                     // Party Frequency
                     VStack(alignment: .leading) {
                         Text("  How often do you host parties?")
-                            .font(.custom("Outfit-Bold", fixedSize:15))
+                            .font(.custom("Outfit-Bold", fixedSize: 15))
                         Picker("Parties", selection: $selectedPartyFrequency) {
                             ForEach(frequencies, id: \.self) { frequency in
                                 Text(frequency).tag(frequency)
@@ -124,11 +151,11 @@ struct EditProfileView: View {
                         }
                         .pickerStyle(SegmentedPickerStyle())
                     }
-                    
+
                     // Guest Frequency
                     VStack(alignment: .leading) {
                         Text("  How often do you have guests over?")
-                            .font(.custom("Outfit-Bold", fixedSize:15))
+                            .font(.custom("Outfit-Bold", fixedSize: 15))
                         Picker(" Guests", selection: $selectedGuestFrequency) {
                             ForEach(frequencies, id: \.self) { frequency in
                                 Text(frequency).tag(frequency)
@@ -136,23 +163,23 @@ struct EditProfileView: View {
                         }
                         .pickerStyle(SegmentedPickerStyle())
                     }
-                    
+
                     // Noise Tolerance Slider
                     VStack(alignment: .leading) {
                         Text("  Noise Tolerance")
-                            .font(.custom("Outfit-Bold", fixedSize:15))
+                            .font(.custom("Outfit-Bold", fixedSize: 15))
                         HStack {
                             Text("Quiet")
-                            Slider(value: $noiseTolerance, in: 0...1, step: 0.1)
+                            Slider(value: $noiseTolerance, in: 0 ... 1, step: 0.1)
                                 .accentColor(.blue)
                             Text("Loud")
                         }
                     }
-                    
+
                     // Buttons
                     HStack {
                         ButtonView(title: "Update", action: {})
-                            .font(.custom("Outfit-Bold", fixedSize:15))
+                            .font(.custom("Outfit-Bold", fixedSize: 15))
                             .padding(.horizontal, 16)
                             .padding(.vertical, -10)
                     }
@@ -162,7 +189,7 @@ struct EditProfileView: View {
             .padding(.horizontal, 25)
         }
     }
-    
+
     struct EditProfileView_Preview: PreviewProvider {
         static var previews: some View {
             EditProfileView()

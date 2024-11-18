@@ -18,7 +18,7 @@ struct ProfileView: View {
     @EnvironmentObject var viewModel: AuthViewModel
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 // Logo at the top
                 Image("Logo")
@@ -64,7 +64,7 @@ struct ProfileView: View {
                         icon: "edit_icon",
                         label: "EDIT PROFILE",
                         isSelected: isEditProfileClicked,
-                        action: { isEditProfileClicked = true } // Navigate to EditProfileView
+                        action: { isEditProfileClicked.toggle() } // Navigate to EditProfileView
                     )
                 }
                 .padding(.bottom, 40)
