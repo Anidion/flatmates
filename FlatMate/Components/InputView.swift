@@ -36,7 +36,7 @@ struct InputView: View {
                 .modifier(InputFieldStyle())
         }
         .frame(maxWidth: .infinity, minHeight: 48) // Adjusted frame
-        .padding(.bottom, 20)
+//        .padding(.bottom, 20)
     }
 }
 

@@ -20,9 +20,3 @@ struct RoundedInputField: View {
             .foregroundColor(.gray) // Text color
     }
 }
-
-#Preview {
-    RoundedInputField()
-        .previewLayout(.sizeThatFits)
-        .padding()
-}

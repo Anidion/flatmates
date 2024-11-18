@@ -15,6 +15,7 @@ struct ProfileView: View {
     @State private var isSettingClicked = false
     @State private var isEditProfileClicked = false
     @State private var isLogOutClicked = false
+    @EnvironmentObject var viewModel: AuthViewModel
 
     var body: some View {
         NavigationView {
@@ -56,7 +57,7 @@ struct ProfileView: View {
                             icon: "logout_icon",
                             label: "LOGOUT",
                             isSelected: isLogOutClicked,
-                            action: { isLogOutClicked = true } // Activate logout navigation
+                            action: { viewModel.signOut() } // Activate logout navigation
                         )
                     }
                     ProfileButton(

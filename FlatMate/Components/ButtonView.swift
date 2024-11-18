@@ -10,6 +10,7 @@ import SwiftUI
 struct ButtonView: View {
     enum ButtonType {
         case standard
+        case outline
         case link
     }
 
@@ -40,6 +41,24 @@ struct ButtonView: View {
                         .cornerRadius(10)
                     }
 
+                case .outline:
+                    Button(action: {
+                        self.action()
+                    }) {
+                        HStack {
+                            Text(title)
+                                .font(.custom("Outfit-Medium", size: 17))
+                                .foregroundColor(Color("primary"))
+                                .frame(maxWidth: .infinity, minHeight: 48)
+                        }
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color("primary"), lineWidth: 3)
+                        )
+                    }
+
                 case .link:
                     Button(action: {
                         self.action()
@@ -49,9 +68,9 @@ struct ButtonView: View {
                             .foregroundColor(Color("primary"))
                             .underline()
                     }
-                }
+            }
         }
-        .padding(EdgeInsets(top: type == .standard ? 24 : 0, leading: 0, bottom: 0, trailing: 0))
+        .padding(EdgeInsets(top: type != .link ? 24 : 0, leading: 0, bottom: 0, trailing: 0))
     }
 }
 
