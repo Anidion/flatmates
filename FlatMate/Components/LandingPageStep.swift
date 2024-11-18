@@ -1,5 +1,5 @@
 //
-//  LandingPage.swift
+//  LandingPageStep.swift
 //  FlatMate
 //
 //  Created by 李吉喆 on 2024-10-18.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OnBoardingPage: View {
+struct LandingPageStep: View {
     @State private var opacityEffect: Bool = false
     @State private var clipEdges: Bool = false
     
@@ -42,5 +42,5 @@ struct OnBoardingPage: View {
 }
 
 #Preview {
-    OnBoardingPage(imageName: "landing1", title: "Live with like-minded people.", description: "It's easier than you think.")
+    LandingPageStep(imageName: "landing1", title: "Live with like-minded people.", description: "It's easier than you think.")
 }
