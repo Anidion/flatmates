@@ -98,11 +98,15 @@ class AuthViewModel: ObservableObject {
         onComplete: @escaping () -> Void
     ) async throws {
         guard let userID = userSession?.uid else { return }
-        
+        let calendar = Calendar.current
+        let ageComponents = calendar.dateComponents([.year], from: dob, to: Date())
+        let age = ageComponents.year ?? 0 // Fallback to 0 if age cannot be calculated
+
         let data: [String: Any] = [
             "firstName": firstName,
             "lastName": lastName,
             "dob": dob,
+            "age": age, // Include the calculated age here
             "gender": gender,
             "bio": bio,
             "roomState": roomState,
@@ -115,12 +119,12 @@ class AuthViewModel: ObservableObject {
         ]
         
         do {
-            print("Pressing the button");
+            print("Saving onboarding data to Firebase...")
             try await Firestore.firestore().collection("users").document(userID).updateData(data)
-            onComplete() // Trigger completion
+            onComplete() // Notify the caller that the operation is complete
         } catch {
             print("DEBUG: Failed to save onboarding data with error \(error.localizedDescription)")
-            throw error // Propagate the error for handling in the view
+            throw error
         }
     }
     

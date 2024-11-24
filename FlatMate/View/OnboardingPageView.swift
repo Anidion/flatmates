@@ -29,6 +29,12 @@ struct OnboardingPageView: View {
     
     @EnvironmentObject var viewModel: AuthViewModel
     var onComplete: () -> Void
+    private var age: Int? {
+        let calendar = Calendar.current
+        let now = Date()
+        let ageComponents = calendar.dateComponents([.year], from: dob, to: now)
+        return ageComponents.year
+    }
     
     private var onboardingSteps: [OnboardingPage] {
         [
@@ -142,7 +148,8 @@ struct OnboardingPageView: View {
             return firstName != "" && lastName != ""
         case 1:
             // Time interval is in seconds, we're just checking that the default date was changed to a date in the past
-            return dob.timeIntervalSinceNow < -100 && gender != Constants.PickerOptions.genders[0] && bio != ""
+            guard let age = age else { return false }
+            return dob.timeIntervalSinceNow < -100 && gender != Constants.PickerOptions.genders[0] && bio != "" && age > 0
         case 2:
             return roomState != Constants.PickerOptions.roomStates[0]
         case 3:
