@@ -9,6 +9,7 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import FirebaseStorage
 
 protocol AuthenticationFormProtocol {
     var formIsValid: Bool { get }
@@ -148,7 +149,7 @@ class AuthViewModel: ObservableObject {
     func updateProfile(
         firstname: String,
         lastname: String,
-        dob: Date, // Updated to accept Date instead of age
+        age: String,
         bio: String,
         isSmoker: Bool,
         pets: Bool,
@@ -160,11 +161,10 @@ class AuthViewModel: ObservableObject {
     ) async throws {
         guard let uid = userSession?.uid else { throw NSError(domain: "AuthError", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not logged in"]) }
 
-        // Prepare updated data
         var updatedData: [String: Any] = [
             "firstName": firstname,
             "lastName": lastname,
-            "dob": Timestamp(date: dob), // Store Date as Firestore Timestamp
+            "age": age,
             "bio": bio,
             "isSmoker": isSmoker,
             "pets": pets,
@@ -190,7 +190,7 @@ class AuthViewModel: ObservableObject {
             if var currentUser = self.currentUser {
                 currentUser.firstName = firstname
                 currentUser.lastName = lastname
-                currentUser.dob = dob // Update dob directly
+                currentUser.age = age
                 currentUser.bio = bio
                 currentUser.isSmoker = isSmoker
                 currentUser.pets = pets
