@@ -95,13 +95,16 @@ class AuthViewModel: ObservableObject {
         partyFrequency: String,
         guestFrequency: String,
         location: String,
+        city: String,
+        province: String,
+        country: String,
         onComplete: @escaping () -> Void
     ) async throws {
         guard let userID = userSession?.uid else { return }
         let calendar = Calendar.current
         let ageComponents = calendar.dateComponents([.year], from: dob, to: Date())
         let age = ageComponents.year ?? 0 // Fallback to 0 if age cannot be calculated
-
+        
         let data: [String: Any] = [
             "firstName": firstName,
             "lastName": lastName,
@@ -115,7 +118,10 @@ class AuthViewModel: ObservableObject {
             "noise": noise,
             "partyFrequency": partyFrequency,
             "guestFrequency": guestFrequency,
-            "location": location
+            "location": location,
+            "city": city,          // Add city
+            "province": province,  // Add province
+            "country": country,    // Add country
         ]
         
         do {

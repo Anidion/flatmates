@@ -24,7 +24,10 @@ struct OnboardingPageView: View {
     @State private var noise = 0.0
     @State private var partyFrequency = Constants.PickerOptions.frequencies[0] // Default value: "Select an option"
     @State private var guestFrequency = Constants.PickerOptions.frequencies[0] // Default value: "Select an option"
-    @State private var location = ""
+    @State private var location = "" // The selected location's name
+    @State private var city = ""     // The selected city
+    @State private var province = "" // The selected province/state
+    @State private var country = ""  // The selected country
     @State private var showLocationSearch = false // State to control location search sheet
     
     @EnvironmentObject var viewModel: AuthViewModel
@@ -206,6 +209,9 @@ struct OnboardingPageView: View {
                                         partyFrequency: partyFrequency,
                                         guestFrequency: guestFrequency,
                                         location: location,
+                                        city: city,          // Add city
+                                        province: province,  // Add province
+                                        country: country,    // Add country
                                         onComplete: onComplete
                                     )
                                 }
@@ -215,7 +221,12 @@ struct OnboardingPageView: View {
                 }
                 .padding(.horizontal, 30)
                 .sheet(isPresented: $showLocationSearch) {
-                    LocationSearchView(selectedLocation: $location)
+                    LocationSearchView(
+                        selectedLocation: $location,
+                        city: $city,
+                        province: $province,
+                        country: $country
+                    )
                 }
             }
             .padding()

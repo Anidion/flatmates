@@ -88,9 +88,7 @@
 			files = (
 				1C2AFA922CE6F4AD0085E62B /* FirebaseFirestoreCombine-Community in Frameworks */,
 				1C2AFA942CE6F4AD0085E62B /* FirebaseFunctions in Frameworks */,
-				1C2AFF4D2CF249450085E62B /* GooglePlacesSwift in Frameworks */,
 				1C2AFA8C2CE6F4AD0085E62B /* FirebaseDatabase in Frameworks */,
-				1C2AFF4B2CF249450085E62B /* GooglePlaces in Frameworks */,
 				1C2AFA8E2CE6F4AD0085E62B /* FirebaseDynamicLinks in Frameworks */,
 				1C2AFA802CE6F4AD0085E62B /* FirebaseAppCheck in Frameworks */,
 				1C2AFA842CE6F4AD0085E62B /* FirebaseAuth in Frameworks */,
@@ -277,7 +275,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				1C2AFA782CE6F4AD0085E62B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				1C2AFF492CF249450085E62B /* XCRemoteSwiftPackageReference "ios-places-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1C0DD0142CC313DC00BE79A3 /* Products */;
@@ -497,7 +494,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Bradley-Li.FlatMate";
+				PRODUCT_BUNDLE_IDENTIFIER = "Bradley-Li.FlatMates";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -531,7 +528,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Bradley-Li.FlatMate";
+				PRODUCT_BUNDLE_IDENTIFIER = "Bradley-Li.FlatMates";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -660,14 +657,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 11.5.0;
-			};
-		};
-		1C2AFF492CF249450085E62B /* XCRemoteSwiftPackageReference "ios-places-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/googlemaps/ios-places-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.2.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
