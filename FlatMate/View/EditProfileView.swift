@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 import FirebaseFirestore
 
-let genders = ["Female", "Male", "Non-binary", "Other"]
+let genders = ["Select an option", "Female", "Male", "Non-binary", "Other"]
 let frequencies = ["Never", "Sometimes", "Always"]
 
 struct EditProfileView: View {

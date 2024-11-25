@@ -27,40 +27,61 @@ struct ProgrammaticInput: Identifiable {
     var pickerOptions: [String]? = nil
     var placeholder: String? = nil
     var sliderConfig: SliderConfiguration? = nil
+    var onTap: (() -> Void)? = nil // Optional callback for tap gestures
 
     @ViewBuilder func render() -> some View {
         switch type {
-            case .text:
-                TextField(placeholder ?? label, text: $stringValue)
-                    .textFieldStyle(DefaultTextFieldStyle())
-            case .multilineText:
-                TextField(placeholder ?? label, text: $stringValue, axis: .vertical)
-                    .textFieldStyle(DefaultTextFieldStyle())
-                    .lineLimit(2 ... 10)
-            case .date:
-                DatePicker(label, selection: $dateValue, displayedComponents: .date)
-                    .datePickerStyle(CompactDatePickerStyle())
-            case .picker:
-                Picker(label, selection: $stringValue) {
-                    ForEach(pickerOptions ?? [], id: \.self) { option in
-                        Text(option).tag(option)
-                    }
+        case .text:
+            VStack {
+                if let onTap = onTap {
+                    // TextField is tappable for cases like location
+                    TextField(placeholder ?? label, text: $stringValue)
+                        .textFieldStyle(DefaultTextFieldStyle())
+                        .disabled(true) // Disable typing if there's an onTap action
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            onTap() // Trigger the custom tap action
+                        }
+                } else {
+                    // Regular TextField for typing (e.g., firstName, lastName)
+                    TextField(placeholder ?? label, text: $stringValue)
+                        .textFieldStyle(DefaultTextFieldStyle())
                 }
-            case .toggle:
-                Toggle(label, isOn: $booleanValue)
-                    .toggleStyle(.switch)
-                    .tint(Color("primary"))
-            case .slider:
-                VStack {
-                    Text(label).frame(maxWidth: .infinity, alignment: .leading)
-                    HStack {
-                        Text(sliderConfig?.minText ?? "").font(.custom("Outfit-Regular", size: 18))
-                        Slider(value: $doubleValue, in: sliderConfig?.range ?? 0 ... 1, step: sliderConfig?.step ?? 0.1)
-                            .accentColor(Color("primary"))
-                        Text(sliderConfig?.maxText ?? "").font(.custom("Outfit-Regular", size: 18))
-                    }
+            }
+
+        case .multilineText:
+            TextField(placeholder ?? label, text: $stringValue, axis: .vertical)
+                .textFieldStyle(DefaultTextFieldStyle())
+                .lineLimit(2 ... 10)
+
+        case .date:
+            DatePicker(label, selection: $dateValue, displayedComponents: .date)
+                .datePickerStyle(CompactDatePickerStyle())
+
+        case .picker:
+            Picker(label, selection: $stringValue) {
+                ForEach(pickerOptions ?? [], id: \.self) { option in
+                    Text(option).tag(option)
                 }
-                .frame(alignment: .topTrailing)
+            }
+
+        case .toggle:
+            Toggle(label, isOn: $booleanValue)
+                .toggleStyle(.switch)
+                .tint(Color("primary"))
+
+        case .slider:
+            VStack {
+                Text(label).frame(maxWidth: .infinity, alignment: .leading)
+                HStack {
+                    Text(sliderConfig?.minText ?? "").font(.custom("Outfit-Regular", size: 18))
+                    Slider(value: $doubleValue, in: sliderConfig?.range ?? 0 ... 1, step: sliderConfig?.step ?? 0.1)
+                        .accentColor(Color("primary"))
+                    Text(sliderConfig?.maxText ?? "").font(.custom("Outfit-Regular", size: 18))
+                }
+            }
+            .frame(alignment: .topTrailing)
         }
     }
 }
+

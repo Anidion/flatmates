@@ -82,6 +82,48 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func submitOnboardingData(
+        firstName: String,
+        lastName: String,
+        dob: Date,
+        gender: String,
+        bio: String,
+        roomState: String,
+        isSmoker: Bool,
+        petsOk: Bool,
+        noise: Double,
+        partyFrequency: String,
+        guestFrequency: String,
+        location: String,
+        onComplete: @escaping () -> Void
+    ) async throws {
+        guard let userID = userSession?.uid else { return }
+        
+        let data: [String: Any] = [
+            "firstName": firstName,
+            "lastName": lastName,
+            "dob": dob,
+            "gender": gender,
+            "bio": bio,
+            "roomState": roomState,
+            "isSmoker": isSmoker,
+            "petsOk": petsOk,
+            "noise": noise,
+            "partyFrequency": partyFrequency,
+            "guestFrequency": guestFrequency,
+            "location": location
+        ]
+        
+        do {
+            print("Pressing the button");
+            try await Firestore.firestore().collection("users").document(userID).updateData(data)
+            onComplete() // Trigger completion
+        } catch {
+            print("DEBUG: Failed to save onboarding data with error \(error.localizedDescription)")
+            throw error // Propagate the error for handling in the view
+        }
+    }
+    
     func completeOnboarding() async throws {
         guard let uid = userSession?.uid else { return }
         do {
