@@ -31,9 +31,12 @@ struct InputView: View {
                 .padding(.bottom, -5)
             
             // Ternary operator to decide between SecureField and TextField
-            (isSecureField ? AnyView(SecureField(placeholder, text: $text))
-                           : AnyView(TextField(placeholder, text: $text)))
-                .modifier(InputFieldStyle())
+            (isSecureField ? AnyView(SecureField(placeholder, text: $text)
+                                    .autocapitalization(.none)
+                                    .modifier(InputFieldStyle()))
+                            : AnyView(TextField(placeholder, text: $text)
+                                    .autocapitalization(.none)
+                                    .modifier(InputFieldStyle())))
         }
         .frame(maxWidth: .infinity, minHeight: 48) // Adjusted frame
 //        .padding(.bottom, 20)
