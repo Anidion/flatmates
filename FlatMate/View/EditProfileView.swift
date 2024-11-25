@@ -23,6 +23,7 @@ let frequencies = ["Never", "Sometimes", "Always"]
 struct EditProfileView: View {
     @EnvironmentObject var viewModel: AuthViewModel
 <<<<<<< HEAD
+<<<<<<< HEAD
     @Environment(\.presentationMode) var presentationMode // Add this environment property
 
     // Profile fields
@@ -31,10 +32,13 @@ struct EditProfileView: View {
     @State private var dob: Date = Date()
     @State private var age: Int = 0 // This will be calculated from dob
 =======
+=======
+    @Environment(\.presentationMode) var presentationMode // Add this environment property
+>>>>>>> be48d43 (completed edit profile backend integration)
 
     // Profile fields
-    @State private var firstname: String = ""
-    @State private var lastname: String = ""
+    @State private var firstName: String = ""
+    @State private var lastName: String = ""
     @State private var dob: Date = Date()
     @State private var age: String = "" // This will be calculated from dob
 >>>>>>> f843fce (resolved merging conflicts)
@@ -113,6 +117,7 @@ struct EditProfileView: View {
                                 }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 .onChange(of: selectedItem) { oldValue, newValue in
                                     Task {
                                         if let data = try? await newValue?.loadTransferable(type: Data.self),
@@ -121,6 +126,11 @@ struct EditProfileView: View {
                                     Task {
                                         if let data = try? await newItem?.loadTransferable(type: Data.self),
 >>>>>>> f843fce (resolved merging conflicts)
+=======
+                                .onChange(of: selectedItem) { oldValue, newValue in
+                                    Task {
+                                        if let data = try? await newValue?.loadTransferable(type: Data.self),
+>>>>>>> be48d43 (completed edit profile backend integration)
                                            let uiImage = UIImage(data: data) {
                                             profileImage = uiImage
                                         }
@@ -139,6 +149,7 @@ struct EditProfileView: View {
                         // First Name, Last Name, Date of Birth
                         VStack(alignment: .leading) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                             ProfileField(title: "First Name", text: $firstName)
                             ProfileField(title: "Last Name", text: $lastName)
                             DatePicker("Date of Birth", selection: $dob, displayedComponents: .date)
@@ -147,6 +158,10 @@ struct EditProfileView: View {
 =======
                             ProfileField(title: "First Name", text: $firstname)
                             ProfileField(title: "Last Name", text: $lastname)
+=======
+                            ProfileField(title: "First Name", text: $firstName)
+                            ProfileField(title: "Last Name", text: $lastName)
+>>>>>>> be48d43 (completed edit profile backend integration)
                             DatePicker("Date of Birth", selection: $dob, displayedComponents: .date)
                                 .onChange(of: dob) { _ in
                                     age = calculateAge(from: dob)
@@ -172,16 +187,24 @@ struct EditProfileView: View {
                     Toggle("I am a smoker.", isOn: $isSmoker)
                         .font(.custom("Outfit-Bold", fixedSize: 15))
 <<<<<<< HEAD
+<<<<<<< HEAD
                         .tint(Color("primary"))
                     Divider()
                     Toggle("I am a pet owner.", isOn: $petsOk)
                         .font(.custom("Outfit-Bold", fixedSize: 15))
                         .tint(Color("primary"))
 =======
+=======
+                        .tint(Color("primary"))
+>>>>>>> be48d43 (completed edit profile backend integration)
                     Divider()
-                    Toggle("I am a pet owner.", isOn: $pets)
+                    Toggle("I am a pet owner.", isOn: $petsOk)
                         .font(.custom("Outfit-Bold", fixedSize: 15))
+<<<<<<< HEAD
 >>>>>>> f843fce (resolved merging conflicts)
+=======
+                        .tint(Color("primary"))
+>>>>>>> be48d43 (completed edit profile backend integration)
                     Divider()
 
                     // Party Frequency
@@ -339,26 +362,62 @@ struct EditProfileView: View {
 }
 =======
                 .padding(.horizontal, 25)
-                .onAppear { loadProfileData() }
+                .onAppear { fetchUserData() } // Load data when the view appears
             }
         }
     }
 
-    // Load user data from ViewModel
-    private func loadProfileData() {
-        if let user = viewModel.currentUser {
-            firstname = user.firstName ?? ""
-            lastname = user.lastName ?? ""
-            dob = user.dob ?? Date()
-            age = calculateAge(from: dob)
-            bio = user.bio ?? ""
-            isSmoker = user.isSmoker ?? false
-            pets = user.pets ?? false
-            selectedGender = user.gender ?? genders[0]
-            selectedPartyFrequency = user.partyFrequency ?? frequencies[0]
-            selectedGuestFrequency = user.guestFrequency ?? frequencies[0]
-            noiseTolerance = user.noiseTolerance ?? 0.0
+    // Fetch user data from Firebase
+    private func fetchUserData() {
+        guard let userID = viewModel.userSession?.uid else {
+            errorMessage = "User not logged in"
+            return
         }
+
+        let userDocRef = Firestore.firestore().collection("users").document(userID)
+        userDocRef.getDocument { snapshot, error in
+            if let error = error {
+                print("Error fetching user data: \(error.localizedDescription)")
+                errorMessage = "Failed to fetch user data"
+                return
+            }
+
+            guard let data = snapshot?.data() else {
+                errorMessage = "User data not found"
+                return
+            }
+
+            // Populate fields
+            firstName = data["firstName"] as? String ?? ""
+            lastName = data["lastName"] as? String ?? ""
+            if let dobTimestamp = data["dob"] as? Timestamp {
+                dob = dobTimestamp.dateValue()
+                age = calculateAge(from: dob)
+            }
+            bio = data["bio"] as? String ?? ""
+            isSmoker = data["isSmoker"] as? Bool ?? false
+            petsOk = data["petsOk"] as? Bool ?? false
+            selectedGender = data["gender"] as? String ?? genders[0]
+            selectedPartyFrequency = data["partyFrequency"] as? String ?? frequencies[0]
+            selectedGuestFrequency = data["guestFrequency"] as? String ?? frequencies[0]
+            noiseTolerance = data["noise"] as? Double ?? 0.0
+
+            if let imageURLString = data["profileImageURL"] as? String,
+               let url = URL(string: imageURLString) {
+                loadImage(from: url)
+            }
+        }
+    }
+
+    // Load image from URL
+    private func loadImage(from url: URL) {
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    profileImage = image
+                }
+            }
+        }.resume()
     }
 
     // Update profile data
@@ -366,12 +425,12 @@ struct EditProfileView: View {
         Task {
             do {
                 try await viewModel.updateProfile(
-                    firstname: firstname,
-                    lastname: lastname,
+                    firstname: firstName,
+                    lastname: lastName,
                     dob: dob,
                     bio: bio,
                     isSmoker: isSmoker,
-                    pets: pets,
+                    pets: petsOk,
                     gender: selectedGender,
                     partyFrequency: selectedPartyFrequency,
                     guestFrequency: selectedGuestFrequency,
@@ -379,6 +438,7 @@ struct EditProfileView: View {
                     profileImage: profileImage
                 )
                 errorMessage = nil
+                presentationMode.wrappedValue.dismiss() // Dismiss view after successful update
             } catch {
                 errorMessage = "Failed to update profile: \(error.localizedDescription)"
             }
@@ -393,5 +453,8 @@ struct EditProfileView: View {
         return "\(ageComponents.year ?? 0)"
     }
 }
+<<<<<<< HEAD
 
 >>>>>>> f843fce (resolved merging conflicts)
+=======
+>>>>>>> be48d43 (completed edit profile backend integration)
