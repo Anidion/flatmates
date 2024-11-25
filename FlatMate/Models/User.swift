@@ -13,7 +13,7 @@ struct User: Identifiable, Codable {
     let username: String
     var firstName: String?
     var lastName: String?
-    var age: String?
+    var dob: Date?
     var bio: String?
     var isSmoker: Bool?
     var pets: Bool?
@@ -35,4 +35,5 @@ struct User: Identifiable, Codable {
     var profileImageURL: String?
     let hasCompletedOnboarding: Bool
 }
+
 
