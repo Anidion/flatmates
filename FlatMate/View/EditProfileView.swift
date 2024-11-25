@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+<<<<<<< HEAD
 import PhotosUI
 import FirebaseFirestore
+=======
+>>>>>>> 0759860 (added fetchUser function to the constructor function so that the state of the user persists)
 
 let genders = ["Select an option", "Female", "Male", "Non-binary", "Other"]
 let frequencies = ["Never", "Sometimes", "Always"]
@@ -27,11 +30,15 @@ struct EditProfileView: View {
     @State private var selectedGender: String = genders[0]
     @State private var selectedPartyFrequency: String = frequencies[0]
     @State private var selectedGuestFrequency: String = frequencies[0]
+<<<<<<< HEAD
     @State private var noiseTolerance: Double = 0.0
     @State private var profileImage: UIImage? = nil
     @State private var isImagePickerPresented = false
     @State private var errorMessage: String?
     @State private var selectedItem: PhotosPickerItem? = nil
+=======
+    @State private var noiseTolerance: Double = 0.0 // Range from 0.0 to 1.0
+>>>>>>> 0759860 (added fetchUser function to the constructor function so that the state of the user persists)
 
     var body: some View {
         NavigationView {
@@ -46,6 +53,7 @@ struct EditProfileView: View {
                     HStack {
                         VStack {
                             ZStack {
+<<<<<<< HEAD
                                 if let image = profileImage {
                                     Image(uiImage: image)
                                         .resizable()
@@ -61,6 +69,15 @@ struct EditProfileView: View {
                                     matching: .images,
                                     photoLibrary: .shared()
                                 ) {
+=======
+                                // Profile Circle
+                                Circle()
+                                    .fill(Color.gray)
+                                    .frame(width: 100, height: 100)
+                                
+                                // Plus Button
+                                Button(action: {}) {
+>>>>>>> 0759860 (added fetchUser function to the constructor function so that the state of the user persists)
                                     Image(systemName: "plus")
                                         .font(.system(size: 15, weight: .bold))
                                         .foregroundColor(.white)
@@ -68,6 +85,7 @@ struct EditProfileView: View {
                                         .background(Circle().fill(Color("primary")))
                                         .shadow(radius: 5)
                                 }
+<<<<<<< HEAD
                                 .onChange(of: selectedItem) { oldValue, newValue in
                                     Task {
                                         if let data = try? await newValue?.loadTransferable(type: Data.self),
@@ -77,6 +95,9 @@ struct EditProfileView: View {
                                     }
                                 }
                                 .offset(x: 35, y: 35)
+=======
+                                .offset(x: 35, y: 35) // Adjust positioning to match the right layout
+>>>>>>> 0759860 (added fetchUser function to the constructor function so that the state of the user persists)
                             }
                         }
                         .padding(.trailing, 10)
@@ -152,15 +173,25 @@ struct EditProfileView: View {
 
                     // Update Button
                     HStack {
+<<<<<<< HEAD
                         ButtonView(title: "Update", action: { updateProfile() })
+=======
+                        ButtonView(title: "Update", action: {})
+                            .font(.custom("Outfit-Bold", fixedSize:15))
+>>>>>>> 0759860 (added fetchUser function to the constructor function so that the state of the user persists)
                             .padding(.horizontal, 16)
                             .padding(.vertical, -10)
                     }
                     .offset(y: -7)
                 }
+<<<<<<< HEAD
                 .padding(.horizontal, 25)
                 .onAppear { fetchUserData() } // Load data when the view appears
             }
+=======
+            }
+            .padding(.horizontal, 25)
+>>>>>>> 0759860 (added fetchUser function to the constructor function so that the state of the user persists)
         }
     }
 
