@@ -148,7 +148,7 @@ class AuthViewModel: ObservableObject {
     func updateProfile(
         firstname: String,
         lastname: String,
-        age: String,
+        dob: Date, // Updated to accept Date instead of age
         bio: String,
         isSmoker: Bool,
         pets: Bool,
@@ -160,10 +160,11 @@ class AuthViewModel: ObservableObject {
     ) async throws {
         guard let uid = userSession?.uid else { throw NSError(domain: "AuthError", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not logged in"]) }
 
+        // Prepare updated data
         var updatedData: [String: Any] = [
             "firstName": firstname,
             "lastName": lastname,
-            "age": age,
+            "dob": Timestamp(date: dob), // Store Date as Firestore Timestamp
             "bio": bio,
             "isSmoker": isSmoker,
             "pets": pets,
@@ -189,7 +190,7 @@ class AuthViewModel: ObservableObject {
             if var currentUser = self.currentUser {
                 currentUser.firstName = firstname
                 currentUser.lastName = lastname
-                currentUser.age = age
+                currentUser.dob = dob // Update dob directly
                 currentUser.bio = bio
                 currentUser.isSmoker = isSmoker
                 currentUser.pets = pets
