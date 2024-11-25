@@ -20,7 +20,7 @@ struct EditProfileView: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var dob: Date = Date()
-    @State private var age: String = "" // This will be calculated from dob
+    @State private var age: Int = 0 // This will be calculated from dob
     @State private var bio: String = ""
     @State private var isSmoker: Bool = false
     @State private var petsOk: Bool = false
@@ -85,8 +85,8 @@ struct EditProfileView: View {
                             ProfileField(title: "First Name", text: $firstName)
                             ProfileField(title: "Last Name", text: $lastName)
                             DatePicker("Date of Birth", selection: $dob, displayedComponents: .date)
-                                .onChange(of: dob) { _ in
-                                    age = calculateAge(from: dob)
+                                .onChange(of: dob) { oldDob, newDob in
+                                    age = calculateAge(from: newDob)
                                 }
                         }
                     }
@@ -221,10 +221,12 @@ struct EditProfileView: View {
     private func updateProfile() {
         Task {
             do {
+                print("DEBUG - ", age)
                 try await viewModel.updateProfile(
                     firstname: firstName,
                     lastname: lastName,
                     dob: dob,
+                    age: age, // Send age to backend
                     bio: bio,
                     isSmoker: isSmoker,
                     pets: petsOk,
@@ -243,10 +245,10 @@ struct EditProfileView: View {
     }
 
     // Helper function to calculate age from date of birth
-    private func calculateAge(from dob: Date) -> String {
+    private func calculateAge(from dob: Date) -> Int {
         let calendar = Calendar.current
         let now = Date()
         let ageComponents = calendar.dateComponents([.year], from: dob, to: now)
-        return "\(ageComponents.year ?? 0)"
+        return ageComponents.year ?? 0
     }
 }
