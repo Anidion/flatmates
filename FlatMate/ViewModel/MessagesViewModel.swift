@@ -1,10 +1,3 @@
-//
-//  MessagesViewModel.swift
-//  FlatMate
-//
-//  Created by Joey on 2024-11-25.
-//
-
 import Foundation
 import FirebaseAuth
 
@@ -12,8 +5,6 @@ class MessagesViewModel: ObservableObject {
     @Published var matches: [Match] = []
     @Published var isLoading: Bool = false
     @Published var currentUserID: String? // Store the current user ID
-    
-    private let messageManager = MessageManager()
     
     init() {
         guard let uid = Auth.auth().currentUser?.uid else {
@@ -40,21 +31,16 @@ class MessagesViewModel: ObservableObject {
                 let updatedMatches = fetchedMatches.map { match -> Match in
                     var matchWithChatID = match
                     
-                    // Use MessageManager's getOrCreateChatID
-                    self?.messageManager.getOrCreateChatID(user1: currentUserID, user2: match.id) { result in
+                    // Use MatchModel's fetchChatID directly
+                    Match.fetchChatID(user1: currentUserID, user2: match.id) { chatID in
                         DispatchQueue.main.async {
-                            switch result {
-                            case .success(let chatID):
-                                matchWithChatID.chatID = chatID
-                            case .failure(let error):
-                                print("Failed to fetch or create chatID: \(error.localizedDescription)")
-                            }
+                            matchWithChatID.chatID = chatID
                         }
                     }
                     
                     return matchWithChatID
                 }
-
+                
                 DispatchQueue.main.async {
                     self?.matches = updatedMatches
                     self?.isLoading = false

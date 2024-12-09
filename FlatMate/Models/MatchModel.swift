@@ -15,12 +15,7 @@ struct Match: Identifiable {
     let imageURL: String
     var chatID: String?
     //let messagePreview: String? // Later iteration
-    
-    // Get list of userIDs
-    
-    
-    
-    
+        
     static func fetchMatches(completion: @escaping ([Match]) -> Void) {
         guard let currentUserID = Auth.auth().currentUser?.uid else {
             print("Error: No authenticated user found.")
@@ -98,7 +93,7 @@ struct Match: Identifiable {
                                         imageURL: profilePictureURL,
                                         chatID: chatID
                                     )
-                                    print("Found match with chatID: \(name) - \(chatID ?? "No ChatID")")
+                                    
                                     matches.append(match)
                                     dispatchGroup.leave()
                                 }
@@ -113,37 +108,33 @@ struct Match: Identifiable {
             }
     }
 
-    private static func fetchChatID(user1: String, user2: String, completion: @escaping (String?) -> Void) {
+    static func fetchChatID(user1: String, user2: String, completion: @escaping (String?) -> Void) {
         let db = Firestore.firestore()
         let chatCollection = db.collection("chats")
         
-        // Query to check if a chat exists for the given users
-        chatCollection
-            .whereField("users", arrayContains: user1)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    print("Error fetching chatID: \(error)")
-                    completion(nil)
-                    return
-                }
-                
-                if let documents = snapshot?.documents {
-                    for document in documents {
-                        let data = document.data()
-                        if let participants = data["users"] as? [String],
-                           participants.contains(user2) {
-                            print("Found existing chatID for \(user1) and \(user2)")
-                            completion(document.documentID)
-                            return
-                        }
-                    }
-                }
-                
-                // If no existing chat, create a new one
+        // Query to check if chatID exists
+        let chatID = [user1, user2].sorted().joined(separator: "_")
+        let chatDocRef = chatCollection.document(chatID)
+        
+        chatDocRef.getDocument { document, error in
+            if let error = error {
+                print("Error checking chatID existence: \(error)")
+                completion(nil)
+                return
+            }
+            
+            if let document = document, document.exists {
+                print("Found existing chatID: \(chatID)")
+                completion(chatID)
+            } else {
+                print("ChatID does not exist. Creating a new one.")
                 createChatID(user1: user1, user2: user2, completion: completion)
             }
+        }
     }
-
+    
+    
+    
     private static func createChatID(user1: String, user2: String, completion: @escaping (String?) -> Void) {
         let db = Firestore.firestore()
         let chatCollection = db.collection("chats")
@@ -153,18 +144,16 @@ struct Match: Identifiable {
             "createdAt": FieldValue.serverTimestamp()
         ]
         
-        var ref: DocumentReference? = nil
-        ref = chatCollection.addDocument(data: chatData) { error in
+        let chatID = [user1, user2].sorted().joined(separator: "_")
+        let chatRef = chatCollection.document(chatID)
+        chatRef.setData(chatData) { error in
             if let error = error {
                 print("Error creating chatID: \(error)")
                 completion(nil)
-                return
-            }
-            
-            if let documentID = ref?.documentID {
-                print("Created new chatID: \(documentID)")
-                completion(documentID)
+            } else {
+                completion(chatID)
             }
         }
+        print("Created new chatID: \(chatID)")
     }
 }

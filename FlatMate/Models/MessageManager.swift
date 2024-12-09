@@ -36,58 +36,7 @@ class MessageManager: ObservableObject {
             }
     }
     
-    // Gets all messages between two users and returns in sorted array
-    func getMessages(chatID: String, completion: @escaping (Result<[Message], Error>) -> Void) {
-        // Query messages for the specified chat ID
-        let query = db.collection("chats")
-            .document(chatID)
-            .collection("messages")
-            .order(by: "timestamp", descending: false)
-
-        query.getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(error)) // Handle Firestore errors
-            } else if let documents = snapshot?.documents {
-                // Safely map documents to Message objects
-                let messages: [Message] = documents.compactMap { doc in
-                    guard
-                        let senderID = doc["senderID"] as? String,
-                        let receiverID = doc["receiverID"] as? String,
-                        let messageText = doc["messageText"] as? String,
-                        let timestamp = doc["timestamp"] as? Timestamp,
-                        let read = doc["read"] as? Bool
-                    else {
-                        print("Invalid document encountered: \(doc.documentID)")
-                        // Return a default placeholder message for invalid data
-                        return Message(
-                            id: doc.documentID,
-                            senderID: "Unknown",
-                            receiverID: "Unknown",
-                            text: "Invalid message data",
-                            read: false,
-                            timestamp: Date.distantPast // Current date as a fallback
-                        )
-                    }
-
-                    // Create and return a valid Message object
-                    return Message(
-                        id: doc.documentID,
-                        senderID: senderID,
-                        receiverID: receiverID,
-                        text: messageText,
-                        read: read,
-                        timestamp: timestamp.dateValue()
-                        
-                    )
-                }
-
-                // Return the array of messages through the completion handler
-                completion(.success(messages))
-            } else {
-                completion(.success([])) // No messages found, return empty array
-            }
-        }
-    }
+    
     func observeMessages(chatID: String, completion: @escaping (Result<[Message], Error>) -> Void) -> ListenerRegistration {
         let query = db.collection("chats")
             .document(chatID)
