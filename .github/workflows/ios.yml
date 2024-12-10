@@ -4,80 +4,90 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+env:
+  IOS_SIMULATORS_TO_TEST: |
+    platform='iOS Simulator',name=iPhone 16
+    platform='iOS Simulator',name=iPhone 16 Plus
+    platform='iOS Simulator',name=iPhone 16 Pro
+    platform='iOS Simulator',name=iPhone 16 Pro Max
+    platform='iOS Simulator',name=iPhone 15
+    platform='iOS Simulator',name=iPhone 15 Plus
+    platform='iOS Simulator',name=iPhone 15 Pro
+    platform='iOS Simulator',name=iPhone 15 Pro Max
+    platform='iOS Simulator',name=iPhone 14
+    platform='iOS Simulator',name=iPhone 14 Plus
+    platform='iOS Simulator',name=iPhone 14 Pro
+    platform='iOS Simulator',name=iPhone 14 Pro Max
+    platform='iOS Simulator',name=iPhone 13
+    platform='iOS Simulator',name=iPhone 13 mini
+    platform='iOS Simulator',name=iPhone 13 Pro
+    platform='iOS Simulator',name=iPhone 13 Pro Max
+    platform='iOS Simulator',name=iPhone 12
+    platform='iOS Simulator',name=iPhone 12 mini
+    platform='iOS Simulator',name=iPhone 12 Pro
+    platform='iOS Simulator',name=iPhone 12 Pro Max
+    platform='iOS Simulator',name=iPhone 11
+    platform='iOS Simulator',name=iPhone 11 Pro
+    platform='iOS Simulator',name=iPhone 11 Pro Max
+    platform='iOS Simulator',name=iPhone X
+    platform='iOS Simulator',name=iPhone XS
+    platform='iOS Simulator',name=iPhone XS Max
+    platform='iOS Simulator',name=iPhone XR
+
 jobs:
-  build:
+  prepare:
+    name: Prepare Build Configuration
+    runs-on: macos-15
+    outputs:
+      simulators: ${{ steps.set-matrix.outputs.simulators }}
+    steps:
+      - name: List available simulators
+        run: |
+          xcrun simctl list devices available
+
+      - name: Set matrix
+        id: set-matrix
+        run: |
+          # Convert multi-line env var to JSON array for matrix
+          JSON_ARRAY=$(echo "$IOS_SIMULATORS_TO_TEST" | sed '/^\s*$/d' | jq -R -s -c 'split("\n")[:-1]')
+          echo "simulators=${JSON_ARRAY}" >> $GITHUB_OUTPUT
+
+  test:
+    needs: prepare
     strategy:
+      fail-fast: false
       matrix:
-        device: [
-          'iPhone X',
-          'iPhone XS',
-          'iPhone XS Max',
-          'iPhone XR',
-          'iPhone 11',
-          'iPhone 11 Pro',
-          'iPhone 11 Pro Max',
-          'iPhone 12',
-          'iPhone 12 Pro',
-          'iPhone 12 Pro Max',
-          'iPhone 12 mini',
-          'iPhone 13',
-          'iPhone 13 Pro',
-          'iPhone 13 Pro Max',
-          'iPhone 13 mini',
-          'iPhone 14',
-          'iPhone 14 Plus',
-          'iPhone 14 Pro',
-          'iPhone 14 Pro Max',
-          'iPhone 15',
-          'iPhone 15 Plus',
-          'iPhone 15 Pro',
-          'iPhone 15 Pro Max',
-          'iPhone 16',
-          'iPhone 16 Plus',
-          'iPhone 16 Pro',
-          'iPhone 16 Pro Max'
-        ]
-      fail-fast: false # Continue running other devices if one fails
-    name: Build and Test on ${{ matrix.device }}
+        destination: ${{ fromJson(needs.prepare.outputs.simulators) }}
+    name: Test on ${{ matrix.destination }}
     runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -switch /Applications/Xcode_15.app
+
       - name: Set Default Scheme
         run: |
           scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
-          echo $default | cat >default
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'].first")
+          if [ -z "$default" ]; then
+            echo "❌ No default scheme found"
+            exit 1
+          fi
+          echo $default >default
           echo Using default scheme: $default
-      - name: Build
-        env:
-          scheme: ${{ 'default' }}
-          platform: ${{ 'iOS Simulator' }}
-          device: ${{ matrix.device }}
+
+      - name: Build and Test
         run: |
-          # Check if simulator exists
-          if ! xcrun simctl list devices available | grep -q "$device"; then
-            echo "Simulator $device not available, skipping..."
-            exit 0
-          fi
-          
-          if [ $scheme = default ]; then scheme=$(cat default); fi
+          scheme=$(cat default)
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
-          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-          xcodebuild build-for-testing -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device"
-      - name: Test
-        env:
-          scheme: ${{ 'default' }}
-          platform: ${{ 'iOS Simulator' }}
-          device: ${{ matrix.device }}
-        run: |
-          # Check if simulator exists
-          if ! xcrun simctl list devices available | grep -q "$device"; then
-            echo "Simulator $device not available, skipping..."
-            exit 0
-          fi
+          file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
           
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
-          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-          xcodebuild test-without-building -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device"
+          device_name=$(echo ${{ matrix.destination }} | grep -o 'name=[^'\'']*' | cut -d= -f2)
+          echo "Running tests for $device_name"
+          
+          xcodebuild test -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination ${{ matrix.destination }} || {
+            echo "❌ Tests failed on $device_name"
+            exit 1
+          }
