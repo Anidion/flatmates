@@ -4,66 +4,46 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-env:
-  IOS_SIMULATORS_TO_TEST: |
-    platform='iOS Simulator',name=iPhone 16
-    platform='iOS Simulator',name=iPhone 16 Plus
-    platform='iOS Simulator',name=iPhone 16 Pro
-    platform='iOS Simulator',name=iPhone 16 Pro Max
 
 jobs:
-  prepare:
-    name: Prepare Build Configuration
+  build-and-test:
     runs-on: macos-15
-    outputs:
-      simulators: ${{ steps.set-matrix.outputs.simulators }}
-    steps:
-      - name: List available simulators
-        run: |
-          xcrun simctl list devices available
-
-      - name: Set matrix
-        id: set-matrix
-        run: |
-          JSON_ARRAY=$(echo "$IOS_SIMULATORS_TO_TEST" | sed '/^\s*$/d' | jq -R -s -c 'split("\n")[:-1]')
-          echo "simulators=${JSON_ARRAY}" >> $GITHUB_OUTPUT
-
-  test:
-    needs: prepare
     strategy:
       fail-fast: false
       matrix:
-        destination: ${{ fromJson(needs.prepare.outputs.simulators) }}
-    name: Test on ${{ matrix.destination }}
-    runs-on: macos-15
+        device: ["iPhone X", "iPhone 11", "iPhone 12", "iPhone 13", "iPhone 14", "iPhone 15", "iPhone 16"]
+        os: ["18.0", "18.1", "18.2"]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode Version
-        run: sudo xcode-select -switch /Applications/Xcode_15.app
+      - name: List Available Simulators
+        run: xcrun simctl list devices
 
       - name: Set Default Scheme
         run: |
           scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'].first")
-          if [ -z "$default" ]; then
-            echo "❌ No default scheme found"
-            exit 1
-          fi
-          echo $default >default
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
+          echo $default | cat >default
           echo Using default scheme: $default
 
-      - name: Build and Test
+      - name: Build
         run: |
-          scheme=$(cat default)
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
-          file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
-          
-          device_name=$(echo ${{ matrix.destination }} | grep -o 'name=[^'\'']*' | cut -d= -f2)
-          echo "Running tests for $device_name"
-          
-          xcodebuild test -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination ${{ matrix.destination }} || {
-            echo "❌ Tests failed on $device_name"
+          device=$(xcrun simctl list devices available | grep -oE "${{ matrix.device }}.*OS:${{ matrix.os }}" | head -1 | awk '{$1=$1;print}')
+          if [ -z "$device" ]; then
+            echo "❌ No suitable device found for ${{ matrix.device }} with OS ${{ matrix.os }}!"
             exit 1
-          }
+          fi
+          echo "Building for device: $device"
+          xcodebuild build-for-testing -scheme "$(cat default)" -project "$(ls -A | grep -i \\.xcodeproj\$)" -destination "platform=iOS Simulator,name=${{ matrix.device }},OS=${{ matrix.os }}"
+
+      - name: Test
+        run: |
+          device=$(xcrun simctl list devices available | grep -oE "${{ matrix.device }}.*OS:${{ matrix.os }}" | head -1 | awk '{$1=$1;print}')
+          if [ -z "$device" ]; then
+            echo "❌ No suitable device found for ${{ matrix.device }} with OS ${{ matrix.os }}!"
+            exit 1
+          fi
+          echo "Testing on device: $device"
+          xcodebuild test-without-building -scheme "$(cat default)" -project "$(ls -A | grep -i \\.xcodeproj\$)" -destination "platform=iOS Simulator,name=${{ matrix.device }},OS=${{ matrix.os }}"
