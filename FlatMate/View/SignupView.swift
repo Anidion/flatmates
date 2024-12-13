@@ -19,96 +19,99 @@ struct SignupView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                // Logo Image
-                Image("Logo Straight Blue")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 103)
-                    .padding(.top, 15)
-                    .padding(.bottom, 20)
-                    .padding(.horizontal, 35)
-                
-                // Signup Title
-                Text("Create Your Account")
-                    .font(.custom("Outfit-Bold", size: 28))
-                    .multilineTextAlignment(.center)
-                    .padding(.vertical, 20)
-                
-                // Input Fields
+            ScrollView {
                 VStack {
-                    InputView(text: $username, title: "Username", placeholder: "username", isSecureField: false)
-                    InputView(text: $email, title: "Email Address", placeholder: "name@example.com", isSecureField: false)
-                    InputView(text: $password, title: "Password", placeholder: "***************", isSecureField: true)
-                    InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "***************", isSecureField: true)
+                    // Logo Image
+                    Image("Logo Straight Blue")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 103)
+                        .padding(.top, 15)
+                        .padding(.bottom, 20)
+                        .padding(.horizontal, 35)
                     
-                    // Error Message Display
-                    if let errorMessage = errorMessage {
-                        Text(errorMessage)
-                            .font(.custom("Outfit-Regular", size: 14))
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.leading)
-                            .padding(.bottom, 10)
-                    }
-
-                    // Signup Button
-                    ButtonView(title: "Sign up", action: {Task {
-                        if validatePassword() {
-                            do {
-                                try await viewModel.createUser(withEmail: email, password: password, username: username)
-                            } catch let error as NSError {
-                                // Handle Firebase-specific errors
-                                if let authError = AuthErrorCode(rawValue: error.code) {
-                                    switch authError {
-                                    case .emailAlreadyInUse:
-                                        errorMessage = "The email address is already taken."
-                                    default:
-                                        errorMessage = "Failed to create an account. Please try again."
+                    // Signup Title
+                    Text("Create Your Account")
+                        .font(.custom("Outfit-Bold", size: 28))
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 20)
+                    
+                    // Input Fields
+                    VStack {
+                        InputView(text: $username, title: "Username", placeholder: "username", isSecureField: false)
+                        InputView(text: $email, title: "Email Address", placeholder: "name@example.com", isSecureField: false)
+                        InputView(text: $password, title: "Password", placeholder: "***************", isSecureField: true)
+                        InputView(text: $confirmPassword, title: "Confirm Password", placeholder: "***************", isSecureField: true)
+                        
+                        // Error Message Display
+                        if let errorMessage = errorMessage {
+                            Text(errorMessage)
+                                .font(.custom("Outfit-Regular", size: 14))
+                                .foregroundColor(.red)
+                                .multilineTextAlignment(.leading)
+                                .padding(.bottom, 10)
+                        }
+                        
+                        // Signup Button
+                        ButtonView(title: "Sign up", action: {Task {
+                            if validatePassword() {
+                                do {
+                                    try await viewModel.createUser(withEmail: email, password: password, username: username)
+                                } catch let error as NSError {
+                                    // Handle Firebase-specific errors
+                                    if let authError = AuthErrorCode(rawValue: error.code) {
+                                        switch authError {
+                                        case .emailAlreadyInUse:
+                                            errorMessage = "The email address is already taken."
+                                        default:
+                                            errorMessage = "Failed to create an account. Please try again."
+                                        }
+                                    } else {
+                                        errorMessage = "An unexpected error occurred. Please contact support."
                                     }
-                                } else {
-                                    errorMessage = "An unexpected error occurred. Please contact support."
                                 }
                             }
+                        }})
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+                    
+                    // Terms of Service and Privacy Policy
+                    VStack {
+                        (
+                            Text("ⓘ By tapping 'Sign up', you agree to our ")
+                            + Text("Terms of Service").underline()
+                            + Text(" and ")
+                            + Text("Privacy Policy").underline()
+                            + Text(".")
+                        )
+                        .multilineTextAlignment(.center)
+                    }
+                    .font(.custom("Outfit-Regular", size: 15))
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 15)
+                    .padding(.bottom, 45)
+                    
+                    // Already have an account? Log in button
+                    Button(action: {
+                        dismiss() // Dismiss the signup view to return to login
+                    }) {
+                        HStack(spacing: 3) {
+                            Text("Already have an account?")
+                                .font(.custom("Outfit-Regular", size: 17))
+                                .foregroundColor(.primary)
+                            Text("Log in")
+                                .font(.custom("Outfit-Bold", size: 17))
+                                .foregroundColor(Color("primary")) // Use your custom primary color here
+                                .underline()
                         }
-                    }})
+                    }
+                    .padding(.bottom, 20)
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 20)
-                
-                // Terms of Service and Privacy Policy
-                VStack {
-                    (
-                        Text("ⓘ By tapping 'Sign up', you agree to our ")
-                        + Text("Terms of Service").underline()
-                        + Text(" and ")
-                        + Text("Privacy Policy").underline()
-                        + Text(".")
-                    )
-                    .multilineTextAlignment(.center)
-                }
-                .font(.custom("Outfit-Regular", size: 15))
-                .foregroundColor(.primary)
-                .padding(.horizontal, 15)
-                Spacer()
-
-                // Already have an account? Log in button
-                Button(action: {
-                    dismiss() // Dismiss the signup view to return to login
-                }) {
-                    HStack(spacing: 3) {
-                        Text("Already have an account?")
-                            .font(.custom("Outfit-Regular", size: 17))
-                            .foregroundColor(.primary)
-                        Text("Log in")
-                            .font(.custom("Outfit-Bold", size: 17))
-                            .foregroundColor(Color("primary")) // Use your custom primary color here
-                            .underline()
-                    }
-                }
-                .padding(.bottom, 20)
             }
-            .padding(.horizontal, 20)
-            .navigationBarHidden(true) // Hide the navigation bar
+            .scrollDismissesKeyboard(.interactively)
+            .navigationBarHidden(true)
         }
     }
     
