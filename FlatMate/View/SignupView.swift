@@ -119,8 +119,8 @@ struct SignupView: View {
             return false
         }
         
-        if password.count < 12 {
-            errorMessage = "Password must be at least 12 characters long."
+        if password.count < 8 {
+            errorMessage = "Password must be at least 8 characters long."
             return false
         }
         
