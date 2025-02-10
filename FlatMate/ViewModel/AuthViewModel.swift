@@ -153,11 +153,11 @@ class AuthViewModel: ObservableObject {
         age: Int,
         bio: String,
         isSmoker: Bool,
-        pets: Bool,
+        petsOk: Bool,
         gender: String,
         partyFrequency: String,
         guestFrequency: String,
-        noiseTolerance: Double,
+        noise: Double,
         profileImage: UIImage?
     ) async throws {
         guard let uid = userSession?.uid else {
@@ -174,11 +174,11 @@ class AuthViewModel: ObservableObject {
             "age": age,
             "bio": bio,
             "isSmoker": isSmoker,
-            "pets": pets,
+            "petsOk": petsOk,
             "gender": gender,
             "partyFrequency": partyFrequency,
             "guestFrequency": guestFrequency,
-            "noiseTolerance": noiseTolerance
+            "noise": noise
         ]
 
         do {
@@ -208,11 +208,11 @@ class AuthViewModel: ObservableObject {
                 currentUser.dob = dob
                 currentUser.bio = bio
                 currentUser.isSmoker = isSmoker
-                currentUser.pets = pets
+                currentUser.petsOk = petsOk
                 currentUser.gender = gender
                 currentUser.partyFrequency = partyFrequency
                 currentUser.guestFrequency = guestFrequency
-                currentUser.noiseTolerance = noiseTolerance
+                currentUser.noise = noise
                 if let url = updatedData["profileImageURL"] as? String {
                     currentUser.profileImageURL = url
                 }

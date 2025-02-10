@@ -16,11 +16,11 @@ struct User: Identifiable, Codable {
     var dob: Date?
     var bio: String?
     var isSmoker: Bool?
-    var pets: Bool?
+    var petsOk: Bool?
     var gender: String?
     var partyFrequency: String?
     var guestFrequency: String?
-    var noiseTolerance: Double?
+    var noise: Double?
     var profileImageURL: String?
     let hasCompletedOnboarding: Bool
 }

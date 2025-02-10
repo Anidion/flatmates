@@ -26,7 +26,7 @@ struct EditProfileView: View {
     @State private var selectedGender: String = genders[0]
     @State private var selectedPartyFrequency: String = frequencies[0]
     @State private var selectedGuestFrequency: String = frequencies[0]
-    @State private var noiseTolerance: Double = 0.0
+    @State private var noise: Double = 0.0
     @State private var profileImage: UIImage? = nil
 //    @State private var isImagePickerPresented = false
     @State private var errorMessage: String?
@@ -138,7 +138,7 @@ struct EditProfileView: View {
                             .font(.custom("Outfit-Bold", fixedSize: 15))
                         HStack {
                             Text("Quiet")
-                            Slider(value: $noiseTolerance, in: 0...5, step: 0.1)
+                            Slider(value: $noise, in: 0...5, step: 0.1)
                                 .accentColor(Color("primary"))
                             Text("Loud")
                         }
@@ -219,7 +219,7 @@ struct EditProfileView: View {
             selectedGender = data["gender"] as? String ?? genders[0]
             selectedPartyFrequency = data["partyFrequency"] as? String ?? frequencies[0]
             selectedGuestFrequency = data["guestFrequency"] as? String ?? frequencies[0]
-            noiseTolerance = data["noise"] as? Double ?? 0.0
+            noise = data["noise"] as? Double ?? 0.0
             
             if let imageURLString = data["profileImageURL"] as? String,
                let url = URL(string: imageURLString) {
@@ -250,11 +250,11 @@ struct EditProfileView: View {
                     age: age, // Send age to backend
                     bio: bio,
                     isSmoker: isSmoker,
-                    pets: petsOk,
+                    petsOk: petsOk,
                     gender: selectedGender,
                     partyFrequency: selectedPartyFrequency,
                     guestFrequency: selectedGuestFrequency,
-                    noiseTolerance: noiseTolerance,
+                    noise: noise,
                     profileImage: profileImage
                 )
                 errorMessage = nil
