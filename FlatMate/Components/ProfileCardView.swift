@@ -133,6 +133,7 @@ struct ProfileCardView: View {
             }
             .padding()
         }
+        .frame(width: size.width, height: size.height)
         .background(Color.white)
         .cornerRadius(20)
         .shadow(color: isTopCard ? getShadowColor() : (isSecondCard && dragOffset.width != 0 ? Color.gray.opacity(0.2) : Color.clear), radius: 10, x: 0, y: 3)
