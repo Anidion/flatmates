@@ -30,6 +30,11 @@ struct OnboardingPageView: View {
     @State private var country = ""  // The selected country
     @State private var showLocationSearch = false // State to control location search sheet
     @EnvironmentObject var viewModel: AuthViewModel
+    
+    //Alerts for invalid input
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    
     var onComplete: () -> Void
     private var age: Int? {
         let calendar = Calendar.current
@@ -171,22 +176,54 @@ struct OnboardingPageView: View {
     func isStepComplete() -> Bool {
         switch currentStep {
             case 0:
-                return firstName != "" && lastName != ""
+                if(firstName == "" || lastName == ""){
+                    alertMessage = "Please enter your first and last name."
+                    return false
+                }
+                return true
             case 1: // Verify age > 18YO.
                 let calendar = Calendar.current
                 let now = Date()
                 let ageComponents = calendar.dateComponents([.year], from: dob, to: now)
                 let age = ageComponents.year ?? 0
             
-                return dob.timeIntervalSinceNow < -100 && age >= 18 && gender != "" && bio != ""
+                if (age <= 18){
+                    alertMessage = "Must be over 18 to sign up"
+                    return false
+                }
+                else if (gender == Constants.PickerOptions.genders[0]){
+                    alertMessage = "Please specify gender"
+                    return false
+                }
+                else if (bio == ""){
+                    alertMessage = "Please fill out bio"
+                    return false
+                }
+                return true
             case 2:
-                return roomState != Constants.PickerOptions.roomStates[0]
+                if (roomState == Constants.PickerOptions.roomStates[0]){
+                    alertMessage = "Please select an option"
+                    return false
+                }
+                return true
             case 3:
                 return true
             case 4:
-                return partyFrequency != Constants.PickerOptions.frequencies[0] && guestFrequency != Constants.PickerOptions.frequencies[0]
+                if (partyFrequency == Constants.PickerOptions.frequencies[0]){
+                    alertMessage = "Please select a party frequency option"
+                    return false
+                }
+                else if (guestFrequency == Constants.PickerOptions.frequencies[0]){
+                    alertMessage = "Please select a guest frequency option"
+                    return false
+                }
+                return true
             case 5:
-                return location != ""
+                if (location == ""){
+                    alertMessage = "Please select a location"
+                    return false
+                }
+                return true
             default:
                 return false
         }
@@ -218,6 +255,10 @@ struct OnboardingPageView: View {
                     ButtonView(
                         title: self.currentStep == onboardingSteps.count - 1 ? "Submit" : "Next",
                         action: {
+                            if !isStepComplete() {
+                                showAlert = true
+                                return
+                            }
                             if self.currentStep < onboardingSteps.count - 1 {
                                 self.currentStep += 1
                             } else {
@@ -243,7 +284,11 @@ struct OnboardingPageView: View {
                                 }
                             }
                         })
-                    .disabled(!isStepComplete())
+                    .alert(isPresented: $showAlert) {
+                        Alert(title: Text("Incomplete Step"),
+                              message:Text(alertMessage),
+                              dismissButton: .default(Text("OK")))
+                    }
                 }
                 .padding(.horizontal, 30)
                 .sheet(isPresented: $showLocationSearch) {
